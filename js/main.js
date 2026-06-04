@@ -8,9 +8,10 @@
 
   /* ---- Config ---- */
   // Wedding day/time (local). Month is 0-indexed: 6 = July.
-  var WEDDING_DATE = new Date(2026, 6, 22, 7, 15, 0);
+  // 22 July 2026, 7:00 PM (Phera Ceremony).
+  var WEDDING_DATE = new Date(2026, 6, 22, 19, 0, 0);
   // Contact number for RSVP (international format, no "+" or spaces).
-  var WHATSAPP_NUMBER = "919414042146";
+  var WHATSAPP_NUMBER = "919414042346";
 
   /* ============================================================
      0. Hide decorative images that fail to load
@@ -33,7 +34,86 @@
       revealContent.hidden = false;
       revealBtn.setAttribute("aria-expanded", "true");
       revealBtn.style.display = "none";
+      launchConfetti();
     });
+  }
+
+  /* ============================================================
+     Poppers / crackers confetti effect (canvas, no library)
+     ============================================================ */
+  function launchConfetti() {
+    var reduce =
+      window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) return;
+
+    var canvas = document.createElement("canvas");
+    canvas.style.cssText =
+      "position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999;";
+    document.body.appendChild(canvas);
+
+    var ctx = canvas.getContext("2d");
+    var W = (canvas.width = window.innerWidth);
+    var H = (canvas.height = window.innerHeight);
+    var colors = ["#f5a623", "#e8821e", "#c9a24b", "#6b1414", "#b03052", "#fff8ec"];
+
+    // Two "poppers" firing inward from the bottom corners.
+    var pieces = [];
+    function spawn(originX, angleDeg) {
+      for (var i = 0; i < 70; i++) {
+        var angle = (angleDeg + (Math.random() * 50 - 25)) * (Math.PI / 180);
+        var speed = 8 + Math.random() * 9;
+        pieces.push({
+          x: originX,
+          y: H,
+          vx: Math.cos(angle) * speed,
+          vy: -Math.sin(angle) * speed,
+          size: 5 + Math.random() * 7,
+          color: colors[(Math.random() * colors.length) | 0],
+          rot: Math.random() * Math.PI,
+          vr: Math.random() * 0.3 - 0.15,
+          life: 1
+        });
+      }
+    }
+    spawn(W * 0.08, 70);
+    spawn(W * 0.92, 110);
+
+    var gravity = 0.22;
+    var frames = 0;
+
+    function frame() {
+      ctx.clearRect(0, 0, W, H);
+      frames++;
+      var alive = false;
+
+      for (var i = 0; i < pieces.length; i++) {
+        var p = pieces[i];
+        p.vy += gravity;
+        p.x += p.vx;
+        p.y += p.vy;
+        p.rot += p.vr;
+        if (frames > 60) p.life -= 0.018;
+
+        if (p.life > 0 && p.y < H + 40) {
+          alive = true;
+          ctx.save();
+          ctx.globalAlpha = Math.max(0, p.life);
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.rot);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+          ctx.restore();
+        }
+      }
+
+      if (alive && frames < 220) {
+        window.requestAnimationFrame(frame);
+      } else {
+        canvas.remove();
+      }
+    }
+    window.requestAnimationFrame(frame);
   }
 
   /* ============================================================
@@ -147,6 +227,10 @@
     if (sides[1]) sides[1].classList.add("anim", "anim--right");
     var heart = document.querySelector(".invite__heart");
     if (heart) heart.classList.add("anim", "anim--zoom");
+
+    // Couple illustration: fade + gentle zoom-in on scroll.
+    var art = document.querySelector(".invite__art");
+    if (art) art.classList.add("anim--rise-zoom");
 
     // Grouped items animate with a stagger (delay grows per index).
     function stagger(selector, step) {

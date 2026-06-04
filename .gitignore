@@ -1,0 +1,7 @@
+node_modules/
+.vercel
+.DS_Store
+*.log
+
+# Raw personal photo (not used on the site; kept local only)
+assets/images/couple.jpeg
