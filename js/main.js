@@ -171,8 +171,11 @@
     var submitBtn = document.getElementById("rsvpSubmit");
     var successBox = document.getElementById("rsvpSuccess");
     var attendRadios = form.querySelectorAll('input[name="attend"]');
+    var dayRadios = form.querySelectorAll('input[name="days"]');
 
     // Show/hide the phone + days block based on the attend choice.
+    // Phone and day selection are required only while the block is visible
+    // (so hidden required fields never block submission when "No").
     function syncConditional() {
       var checked = form.querySelector('input[name="attend"]:checked');
       var isYes = checked && checked.value === "Yes";
@@ -181,6 +184,10 @@
         phoneInput.required = !!isYes;
         if (!isYes) phoneInput.value = "";
       }
+      dayRadios.forEach(function (r) {
+        r.required = !!isYes;
+        if (!isYes) r.checked = false;
+      });
     }
     attendRadios.forEach(function (r) {
       r.addEventListener("change", syncConditional);
