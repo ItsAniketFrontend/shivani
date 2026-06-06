@@ -1,6 +1,6 @@
 /* ============================================================
-   Mansi & Akash — Wedding Invitation
-   Interactions: date reveal, countdown, WhatsApp RSVP
+   Rohit weds Shefali — Wedding Invitation
+   Interactions: date reveal, countdown, confetti, RSVP
    ============================================================ */
 
 (function () {
@@ -10,7 +10,13 @@
   // Wedding day/time (local). Month is 0-indexed: 6 = July.
   // 22 July 2026, 7:00 PM (Phera Ceremony).
   var WEDDING_DATE = new Date(2026, 6, 22, 19, 0, 0);
-  // Contact number for RSVP (international format, no "+" or spaces).
+
+  // RSVP submission:
+  //  • Leave GOOGLE_SCRIPT_URL empty ("") to send RSVPs via WhatsApp.
+  //  • Paste your Google Apps Script Web App URL (ends in /exec) to save
+  //    RSVPs straight into your Google Sheet instead.
+  var GOOGLE_SCRIPT_URL = "";
+  // WhatsApp fallback number (international format, no "+" or spaces).
   var WHATSAPP_NUMBER = "919414042346";
 
   /* ============================================================
@@ -155,11 +161,32 @@
   var timer = setInterval(tick, 1000);
 
   /* ============================================================
-     3. RSVP → WhatsApp
+     3. RSVP — conditional fields + Google Sheet / WhatsApp
      ============================================================ */
   var form = document.getElementById("rsvpForm");
 
   if (form) {
+    var yesBlock = document.getElementById("rsvpYesBlock");
+    var phoneInput = document.getElementById("rsvpPhone");
+    var submitBtn = document.getElementById("rsvpSubmit");
+    var successBox = document.getElementById("rsvpSuccess");
+    var attendRadios = form.querySelectorAll('input[name="attend"]');
+
+    // Show/hide the phone + days block based on the attend choice.
+    function syncConditional() {
+      var checked = form.querySelector('input[name="attend"]:checked');
+      var isYes = checked && checked.value === "Yes";
+      if (yesBlock) yesBlock.classList.toggle("is-open", !!isYes);
+      if (phoneInput) {
+        phoneInput.required = !!isYes;
+        if (!isYes) phoneInput.value = "";
+      }
+    }
+    attendRadios.forEach(function (r) {
+      r.addEventListener("change", syncConditional);
+    });
+    syncConditional();
+
     form.addEventListener("submit", function (e) {
       e.preventDefault();
 
@@ -168,25 +195,61 @@
         return;
       }
 
-      var name = (document.getElementById("rsvpName").value || "").trim();
-      var guests = (document.getElementById("rsvpGuests").value || "1").trim();
       var attendEl = form.querySelector('input[name="attend"]:checked');
-      var attend = attendEl ? attendEl.value : "";
-      var msg = (document.getElementById("rsvpMsg").value || "").trim();
+      var daysEl = form.querySelector('input[name="days"]:checked');
+      var isYes = attendEl && attendEl.value === "Yes";
 
-      var lines = [
-        "*Wedding RSVP — Rohit & Shefali*",
-        "Name: " + name,
-        "Guests: " + guests,
-        "Attending: " + attend
-      ];
-      if (msg) lines.push("Message: " + msg);
+      var data = {
+        name: (document.getElementById("rsvpName").value || "").trim(),
+        guests: (document.getElementById("rsvpGuests").value || "1").trim(),
+        attend: attendEl ? attendEl.value : "",
+        phone: isYes && phoneInput ? phoneInput.value.trim() : "",
+        days: isYes && daysEl ? daysEl.value : "",
+        message: (document.getElementById("rsvpMsg").value || "").trim()
+      };
 
-      var text = encodeURIComponent(lines.join("\n"));
-      var url = "https://wa.me/" + WHATSAPP_NUMBER + "?text=" + text;
+      function showSuccess() {
+        form.hidden = true;
+        if (successBox) successBox.hidden = false;
+        launchConfetti();
+      }
 
-      window.open(url, "_blank", "noopener");
+      if (GOOGLE_SCRIPT_URL) {
+        // Save to Google Sheet via Apps Script (no-cors = fire-and-forget).
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.textContent = "Sending…";
+        }
+        var body = new URLSearchParams(data);
+        fetch(GOOGLE_SCRIPT_URL, { method: "POST", mode: "no-cors", body: body })
+          .then(showSuccess)
+          .catch(function () {
+            // Network failure — fall back to WhatsApp so the RSVP isn't lost.
+            sendViaWhatsApp(data);
+            if (submitBtn) {
+              submitBtn.disabled = false;
+              submitBtn.textContent = "Send RSVP";
+            }
+          });
+      } else {
+        sendViaWhatsApp(data);
+      }
     });
+  }
+
+  function sendViaWhatsApp(data) {
+    var lines = [
+      "*Wedding RSVP — Rohit & Shefali*",
+      "Name: " + data.name,
+      "Guests: " + data.guests,
+      "Attending: " + data.attend
+    ];
+    if (data.phone) lines.push("Phone: " + data.phone);
+    if (data.days) lines.push("Days: " + data.days);
+    if (data.message) lines.push("Message: " + data.message);
+
+    var text = encodeURIComponent(lines.join("\n"));
+    window.open("https://wa.me/" + WHATSAPP_NUMBER + "?text=" + text, "_blank", "noopener");
   }
 
   /* ============================================================

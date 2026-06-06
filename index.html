@@ -80,9 +80,9 @@
     <div class="invite__couple">
       <div class="invite__side">
         <h3>Rohit Karnawat</h3>
-        <p>S/o Shri Rajesh Kumar Karnawat<br />&amp; Smt. Hemlata Karnawat</p>
+        <p>S/o Shri Rajesh Kumar Karnawat<br /> Smt. Hemlata Karnawat</p>
         <p class="invite__gp">
-          Grand S/o Lt. Shri Jatan Singh ji Karnawat &amp; Lt. Smt. Tej Kanwar ji Karnawat<br />
+          Grand S/o Lt. Shri Jatan Singh ji Karnawat <br /> Lt. Smt. Tej Kanwar ji Karnawat<br />
           Smt. Madhubala ji Karnawat
         </p>
         <p class="invite__city">Jaipur</p>
@@ -92,9 +92,9 @@
 
       <div class="invite__side">
         <h3>Shefali Mehta</h3>
-        <p>D/o Shri Narendra ji Mehta<br />&amp; Smt. Shannu ji Mehta</p>
+        <p>D/o Shri Narendra ji Mehta<br /> Smt. Shannu ji Mehta</p>
         <p class="invite__gp">
-          Grand D/o Lt. Shri Vijay Singh ji Mehta &amp; Lt. Smt. Vimla Devi ji Mehta
+          Grand D/o Lt. Shri Vijay Singh ji Mehta <br /> Smt. Vimla Devi ji Mehta
         </p>
         <p class="invite__city">Makrana</p>
       </div>
@@ -141,7 +141,7 @@
     <ul class="timeline">
       <li class="timeline__item">
         <span class="timeline__time">10:00 AM</span>
-        <div class="timeline__body"><h3>Mayra</h3></div>
+        <div class="timeline__body"><h3>Mayra</h3><p>Followed by Lunch</p></div>
       </li>
       <li class="timeline__item">
         <span class="timeline__time">5:15 PM</span>
@@ -184,18 +184,6 @@
     </div>
   </section>
 
-  <!-- ===== WELCOMING FAMILY ===== -->
-  <section class="section welcome" id="welcome">
-    <img src="assets/images/divider.png" alt="" class="divider" aria-hidden="true" />
-    <h2 class="section__title">Welcoming Family</h2>
-    <div class="welcome__names">
-      <span>Sh. Mahendra Singh ji</span>
-      <span>Manoj ji</span>
-      <span>Pramod ji Karnawat</span>
-    </div>
-    <p class="welcome__all">&amp; Entire Karnawat Family</p>
-  </section>
-
   <!-- ===== RSVP ===== -->
   <section class="section rsvp" id="rsvp">
     <img src="assets/images/divider.png" alt="" class="divider" aria-hidden="true" />
@@ -214,16 +202,40 @@
       <div class="field field--attend">
         <span class="field__label">Will you attend?</span>
         <div class="radio-row">
-          <label><input type="radio" name="attend" value="Yes, I'll be there" checked /> Yes 🎉</label>
-          <label><input type="radio" name="attend" value="Sorry, can't make it" /> No 😔</label>
+          <label><input type="radio" name="attend" value="Yes" checked /> Yes 🎉</label>
+          <label><input type="radio" name="attend" value="No" /> No 😔</label>
         </div>
       </div>
+
+      <!-- Shown only when "Yes" is selected -->
+      <div class="rsvp__conditional field--full" id="rsvpYesBlock">
+        <div class="field">
+          <label for="rsvpPhone">Phone Number</label>
+          <input type="tel" id="rsvpPhone" name="phone" placeholder="+91 XXXXX XXXXX"
+                 inputmode="tel" autocomplete="tel" />
+        </div>
+        <div class="field field--attend">
+          <span class="field__label">Which day(s) will you attend?</span>
+          <div class="radio-col">
+            <label><input type="radio" name="days" value="Attending on 21 July" /> Attending on 21 July</label>
+            <label><input type="radio" name="days" value="Attending on 22 July" /> Attending on 22 July</label>
+            <label><input type="radio" name="days" value="Attending both the dates" checked /> Attending both the dates</label>
+          </div>
+        </div>
+      </div>
+
       <div class="field field--full">
         <label for="rsvpMsg">Message / Blessings (optional)</label>
         <textarea id="rsvpMsg" name="message" rows="3" placeholder="Your wishes for the couple..."></textarea>
       </div>
-      <button type="submit" class="btn btn--lg">Send RSVP via WhatsApp</button>
+      <button type="submit" class="btn btn--lg" id="rsvpSubmit">Send RSVP</button>
     </form>
+
+    <div class="rsvp__success" id="rsvpSuccess" hidden>
+      <p class="rsvp__success-icon">💛</p>
+      <h3>Thank you!</h3>
+      <p>Your RSVP has been received. We can't wait to celebrate with you.</p>
+    </div>
   </section>
 
   <!-- ===== CONTACT ===== -->
