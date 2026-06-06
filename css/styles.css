@@ -605,8 +605,9 @@ a { color: inherit; }
   .timeline__body { padding-left: 18px; }
 
   .rsvp__form { grid-template-columns: 1fr; padding: 22px; }
-  .invite__couple { gap: 12px; }
-  .invite__heart { font-size: 1.5rem; }
+  .invite__couple { flex-direction: column; align-items: center; gap: 14px; }
+  .invite__side { max-width: 100%; }
+  .invite__heart { font-size: 1.8rem; align-self: center; }
 }
 
 @media (prefers-reduced-motion: reduce) {
