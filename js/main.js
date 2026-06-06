@@ -15,7 +15,7 @@
   //  • Leave GOOGLE_SCRIPT_URL empty ("") to send RSVPs via WhatsApp.
   //  • Paste your Google Apps Script Web App URL (ends in /exec) to save
   //    RSVPs straight into your Google Sheet instead.
-  var GOOGLE_SCRIPT_URL = "";
+  var GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyJAWb8xIlq5tjhckfeR9uEDH38mvDXjCOkSHM593al6uFXZIi_eAKSVZTVGqKAQ3Oj/exec";
   // WhatsApp fallback number (international format, no "+" or spaces).
   var WHATSAPP_NUMBER = "919414042346";
 
