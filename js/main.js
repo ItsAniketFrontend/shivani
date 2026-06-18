@@ -171,7 +171,9 @@
     var submitBtn = document.getElementById("rsvpSubmit");
     var successBox = document.getElementById("rsvpSuccess");
     var attendRadios = form.querySelectorAll('input[name="attend"]');
-    var dayRadios = form.querySelectorAll('input[name="days"]');
+    // Only actual radio choices get the show/hide + required treatment.
+    // (A single-date page may instead carry a hidden "days" input.)
+    var dayRadios = form.querySelectorAll('input[type="radio"][name="days"]');
 
     // Show/hide the phone + days block based on the attend choice.
     // Phone and day selection are required only while the block is visible
@@ -203,7 +205,10 @@
       }
 
       var attendEl = form.querySelector('input[name="attend"]:checked');
-      var daysEl = form.querySelector('input[name="days"]:checked');
+      // A selected radio choice, or a fixed hidden value on single-date pages.
+      var daysEl =
+        form.querySelector('input[name="days"]:checked') ||
+        form.querySelector('input[type="hidden"][name="days"]');
       var isYes = attendEl && attendEl.value === "Yes";
 
       var data = {

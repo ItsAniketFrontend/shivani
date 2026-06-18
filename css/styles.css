@@ -549,6 +549,12 @@ a { color: inherit; }
 }
 
 .rsvp__form .btn { grid-column: 1 / -1; justify-self: center; margin-top: 6px; }
+.rsvp__fixed-date {
+  font-family: var(--display);
+  color: var(--maroon);
+  font-size: 1.15rem;
+  margin: 4px 0 0;
+}
 
 /* Success state after submit */
 .rsvp__success {
